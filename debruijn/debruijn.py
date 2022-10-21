@@ -222,14 +222,17 @@ def main():
     """
     # Get arguments
     args = get_arguments()
+    
     dict_kmer = build_kmer_dict(args.fastq_file, args.kmer_size)
     graph = build_graph(dict_kmer)
-    nx.draw(graph)
-    plt.show()
     start_n = get_starting_nodes(graph)
     stop_n = get_sink_nodes(graph)
+    graph = simplify_bubbles(graph)
+    graph = solve_entry_tips(graph, start_n)
+    graph = solve_out_tips(graph, stop_n)
     contigs = get_contigs(graph,start_n, stop_n)
     save_contigs(contigs, args.output_file)
+    draw_graph(graph,'mygraph')
     # Fonctions de dessin du graphe
     # A decommenter si vous souhaitez visualiser un petit 
     # graphe
