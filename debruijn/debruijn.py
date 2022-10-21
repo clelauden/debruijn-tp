@@ -137,17 +137,18 @@ def solve_bubble(digraph, ancestor_node, descendant_node):
 
 def simplify_bubbles(digraph):
     bubble = False
-    for node in digraph:
-        predecessor_node_list = list(nx.predecessors(digraph, node))
-        if len(predecessor_node_list) > 1:
-            for predecessor in predecessor_node_list:
-                predecessor_node = nx.lowest_common_ancestor(digraph, predecessor, node)
-                if predecessor_node != None:
+    for node in digraph.nodes():
+        predecessors_list = [n for n in digraph.predecessors(node)]
+        if len(predecessors_list) > 1:
+            for i in range(0,len(predecessors_list)-1):
+                ancestor_node = nx.lowest_common_ancestor(digraph,predecessors_list[i],predecessors_list[i+1])
+                if ancestor_node != None:
                     bubble = True
                     break
             if bubble == True:
-                digraph = simplify_bubbles(solve_bubble(digraph, predecessor_node, node))
                 break
+    if bubble == True:
+        digraph = simplify_bubbles(solve_bubble(digraph,ancestor_node,node))
     return digraph
 
 def solve_entry_tips(graphe, starting_nodes):
