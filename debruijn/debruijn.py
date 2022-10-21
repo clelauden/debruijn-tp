@@ -24,6 +24,7 @@ random.seed(9001)
 from random import randint
 import statistics
 import matplotlib.pyplot as plt
+import textwrap
 matplotlib.use("Agg")
 
 __author__ = "Clémence Lauden"
@@ -150,39 +151,10 @@ def simplify_bubbles(digraph):
     return digraph
 
 def solve_entry_tips(graphe, starting_nodes):
-    path_l = []
-    path_len = []
-    path_weight = []
-
-    for node in starting_nodes:
-        for des_node in nx.descendants(graphe, node):
-            pred_node = list(graphe.predecessors(des_node))
-            if len(pred_node) > 1:
-                for path in nx.all_simple_paths(graphe, node, des_node):
-                    path_l.append(path)
-                    path_len.append(len(path))
-                    path_weight.append(path_average_weight(graphe, path))
-    graphe = select_best_path(graphe, path_l, path_len, path_weight, True, False)
-
-    return graphe
+    pass
 
 def solve_out_tips(graphe, list_node_out):
-    path_l = []
-    path_len = []
-    path_weight = []
-
-    for node in list_node_out:
-        for anc_node in nx.ancestors(graphe, node):
-            succ_node = list(graphe.successors(anc_node))
-            if len(succ_node) > 1:
-                for path in nx.all_simple_paths(graphe, node, anc_node):
-                    path_l.append(path)
-                    path_len.append(len(path))
-                    path_weight.append(path_average_weight(graphe, path))
-
-    graphe = select_best_path(graphe, path_l, path_len, path_weight, True, False)
-
-    return graphe
+    pass
 
 def get_starting_nodes(digraph):
     start_node = [n for n,d in digraph.in_degree() if d==0]
@@ -207,7 +179,7 @@ def get_contigs(digraph, start_node, stop_node):
 def save_contigs(contig, output_file):
     with open(output_file, "w") as file:
         for i in range(len(contig)):
-            file.write(">contig_" + str(i) + " len=" + str(contig[i][1]) + "\n" + fill(contig[i][0]) + "\n")
+            file.write(">contig_" + str(i) + " len=" + str(contig[i][1]) + "\n" + textwrap.fill((contig[i][0]), width=80) + "\n")
 
 def fill(text, width=80):
     """Split text with a line return to respect fasta format"""
