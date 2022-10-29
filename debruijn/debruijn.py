@@ -27,12 +27,12 @@ import matplotlib.pyplot as plt
 import textwrap
 matplotlib.use("Agg")
 
-__author__ = "Clémence Lauden"
+__author__ = "Clemence Lauden"
 __copyright__ = "Universite Paris Diderot"
-__credits__ = ["Clémence Lauden"]
+__credits__ = ["Clemence Lauden"]
 __license__ = "GPL"
 __version__ = "1.0.0"
-__maintainer__ = "Clémence Lauden"
+__maintainer__ = "Clemence Lauden"
 __email__ = "clemence.lauden@hotmail.fr"
 __status__ = "Developpement"
 
@@ -151,11 +151,37 @@ def simplify_bubbles(digraph):
         digraph = simplify_bubbles(solve_bubble(digraph,ancestor_node,node))
     return digraph
 
-def solve_entry_tips(graphe, starting_nodes):
-    pass
+def solve_entry_tips(digraph, starting_nodes):
+    path_list = []
+    path_length = []
+    weight_avg = []
+    for node in digraph.nodes:
+        predecessors = list(digraph.predecessors(node))
+        if len(predecessors) > 1:
+            for start in starting_nodes:
+                path_list += list(nx.all_simple_paths(digraph, start, node))
+    if len(path_list) != 0:
+        for path in path_list:
+            path_length.append(len(path))
+            weight_avg.append(path_average_weight(digraph, path))
+        digraph = select_best_path(digraph, path_list, path_length, weight_avg, delete_entry_node=True, delete_sink_node=False)
+    return digraph
 
-def solve_out_tips(graphe, list_node_out):
-    pass
+def solve_out_tips(digraph, list_node_out):
+    path_list = []
+    path_length = []
+    weight_avg = []
+    for node in digraph.nodes:
+        successors_list = list(digraph.successors(node))
+        if len(successors_list) > 1:
+            for node_out in list_node_out:
+                path_list += list(nx.all_simple_paths(digraph, node, node_out))
+    if len(path_list) != 0:
+        for path in path_list:
+            path_length.append(len(path))
+            weight_avg.append(path_average_weight(digraph, path))
+        digraph = select_best_path(digraph, path_list, path_length, weight_avg, delete_entry_node=False, delete_sink_node=True)
+    return digraph
 
 def get_starting_nodes(digraph):
     start_node = [n for n,d in digraph.in_degree() if d==0]
